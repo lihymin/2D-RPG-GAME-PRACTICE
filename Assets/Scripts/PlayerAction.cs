@@ -14,6 +14,18 @@ public class PlayerAction : MonoBehaviour
     bool isVertical;
     Vector3 dirVec;
     GameObject scanObject;
+    int rightValue;
+    int leftValue;
+    int upValue;
+    int downValue;
+    bool rightDown;
+    bool leftDown;
+    bool upDown;
+    bool downDown;
+    bool rightUp;
+    bool leftUp;
+    bool upUp;
+    bool downUp;
 
     void Awake()
     {
@@ -24,13 +36,13 @@ public class PlayerAction : MonoBehaviour
     void Update()
     {
         //Check Button Down & Up
-        h = manager.isAction ? 0 : Input.GetAxisRaw("Horizontal");
-        v = manager.isAction ? 0 : Input.GetAxisRaw("Vertical");
+        h = manager.isAction ? 0 : Input.GetAxisRaw("Horizontal") + rightValue + leftValue;
+        v = manager.isAction ? 0 : Input.GetAxisRaw("Vertical") + downValue + upValue;
 
-        bool hDown = manager.isAction ? false : Input.GetButtonDown("Horizontal");
-        bool vDown = manager.isAction ? false : Input.GetButtonDown("Vertical");
-        bool hUp = manager.isAction ? false : Input.GetButtonUp("Horizontal");
-        bool vUp = manager.isAction ? false : Input.GetButtonUp("Vertical");
+        bool hDown = manager.isAction ? false : Input.GetButtonDown("Horizontal") || leftDown || rightDown;
+        bool vDown = manager.isAction ? false : Input.GetButtonDown("Vertical") || upDown || downDown;
+        bool hUp = manager.isAction ? false : Input.GetButtonUp("Horizontal") || leftUp || rightUp;
+        bool vUp = manager.isAction ? false : Input.GetButtonUp("Vertical") || upUp || downUp;
 
         //Check Horizontal Move
         if(hDown) {
@@ -81,6 +93,15 @@ public class PlayerAction : MonoBehaviour
         if(Input.GetButtonDown("Jump") && scanObject != null) {
             manager.Action(scanObject);
         }
+
+        rightDown = false;
+        leftDown = false;
+        upDown = false;
+        downDown = false;
+        rightUp = false;
+        leftUp = false;
+        upUp = false;
+        downUp = false;
     }
 
     void FixedUpdate()
@@ -99,6 +120,58 @@ public class PlayerAction : MonoBehaviour
 
         else {
             scanObject = null;
+        }
+    }
+
+    public void ButtonDown(string key)
+    {
+        switch (key) {
+            case "A":
+                leftValue = -1;
+                leftDown = true;
+                break;
+            case "S":
+                downValue = -1;
+                downDown = true;
+                break;
+            case "D":
+                rightValue = 1;
+                rightDown = true;
+                break;
+            case "W":
+                upValue = 1;
+                upDown = true;
+                break;
+            case "E":
+                manager.CancelPanel();
+                break;
+            case "R":
+                if (scanObject != null) {
+                    manager.Action(scanObject);
+                }
+                break;
+        }
+    }
+
+    public void Buttonup(string key)
+    {
+        switch (key) {
+            case "A":
+                leftValue = 0;
+                leftUp = true;
+                break;
+            case "S":
+                downValue = 0;
+                downUp = true;
+                break;
+            case "D":
+                rightValue = 0;
+                rightUp = true;
+                break;
+            case "W":
+                upValue = 0;
+                upUp = true;
+                break;
         }
     }
 }
