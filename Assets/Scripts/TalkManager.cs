@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TalkManager : MonoBehaviour
 {
-    Dictionary<int, string[]> talkData;
+    public Dictionary<int, string[]> talkData;
     Dictionary<int, Sprite> portraitData;
     public Sprite[] portraitArr;
 

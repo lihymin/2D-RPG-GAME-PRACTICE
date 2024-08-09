@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public TalkManager talkManager;
     public QuestManager questManager;
     public Text talkText;
-    public Text QuestText;
+    public Text questText;
     public Image portraitImg;
     public Animator talkPanel;
     public Animator portraitAnim;
@@ -17,21 +17,35 @@ public class GameManager : MonoBehaviour
     public bool isAction;
     public Sprite prevPortrait;
     public TypeEffect typeEffect;
+    public GameObject player;
+
+    public bool isSave;
 
     void Start()
     {
-        Debug.Log(questManager.CheckQuest());
+        if (isSave) {
+            GameLoad();
+        }
+
+        else {
+            questText.text = questManager.CheckQuest();
+        }
     }
 
     void Update()
     {
         if (Input.GetButtonDown("Cancel")) {
-            if (menuSet.activeSelf) {
-                menuSet.SetActive(false);
-            }
-            else {
-                menuSet.SetActive(true);
-            }
+            CancelPanel();
+        }
+    }
+
+    public void CancelPanel()
+    {
+        if (menuSet.activeSelf) {
+            menuSet.SetActive(false);
+        }
+        else {
+            menuSet.SetActive(true);
         }
     }
     public void Action(GameObject scanObj)
@@ -60,7 +74,7 @@ public class GameManager : MonoBehaviour
         if (talkData == null) {
             isAction = false;
             talkIndex = 0;
-            QuestText.text = questManager.CheckQuest(id);
+            questText.text = questManager.CheckQuest(id);
             return;
         }
 
@@ -79,17 +93,39 @@ public class GameManager : MonoBehaviour
             portraitImg.color = new Color(1, 1, 1, 0);
         }
 
-        if (typeEffect.msgText.text != typeEffect.targetMsg && typeEffect.isEffecting) {
-            typeEffect.msgText.text = typeEffect.targetMsg;
-        }
-
         isAction = true;
 
         talkIndex++;
     }
+    public void GameSave()
+    {
+        if (!PlayerPrefs.HasKey("PlayerX")) {
+            return;
+        }
+        PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
+        PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
+        PlayerPrefs.SetInt("QuestId", questManager.questId);
+        PlayerPrefs.SetInt("QuestActionIndex", questManager.questActionIndex);
+        PlayerPrefs.Save();
 
+        menuSet.SetActive(false);
+        isSave = true;
+    }
+    public void GameLoad()
+    {
+        float x = PlayerPrefs.GetFloat("PlayerX");
+        float y = PlayerPrefs.GetFloat("PlayerY");
+        int questId = PlayerPrefs.GetInt("QuestId");
+        int questActionIndex = PlayerPrefs.GetInt("QuestActionIndex");
+
+        player.transform.position = new Vector3(x, y, 0);
+        questManager.questId = questId;
+        questManager.questActionIndex = questActionIndex;
+        questManager.ControlObject();
+    }
     public void GameExit()
     {
         Application.Quit();
     }
+
 }
