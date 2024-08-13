@@ -18,18 +18,10 @@ public class GameManager : MonoBehaviour
     public Sprite prevPortrait;
     public TypeEffect typeEffect;
     public GameObject player;
-
-    public bool isSave;
-
     void Start()
     {
-        if (isSave) {
-            GameLoad();
-        }
-
-        else {
-            questText.text = questManager.CheckQuest();
-        }
+        GameLoad();
+        questText.text = questManager.CheckQuest();
     }
 
     void Update()
@@ -99,9 +91,6 @@ public class GameManager : MonoBehaviour
     }
     public void GameSave()
     {
-        if (!PlayerPrefs.HasKey("PlayerX")) {
-            return;
-        }
         PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
         PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
         PlayerPrefs.SetInt("QuestId", questManager.questId);
@@ -109,10 +98,13 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
 
         menuSet.SetActive(false);
-        isSave = true;
     }
     public void GameLoad()
     {
+        if (!PlayerPrefs.HasKey("PlayerX")) {
+            return;
+        }
+
         float x = PlayerPrefs.GetFloat("PlayerX");
         float y = PlayerPrefs.GetFloat("PlayerY");
         int questId = PlayerPrefs.GetInt("QuestId");
